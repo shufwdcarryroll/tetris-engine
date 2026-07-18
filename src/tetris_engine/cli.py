@@ -1,4 +1,4 @@
-"""Command-line entry point.
+"""Command-line interface.
 
     $ tetris < input.txt > output.txt
     $ python -m tetris_engine < input.txt > output.txt

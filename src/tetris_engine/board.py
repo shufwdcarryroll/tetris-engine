@@ -9,8 +9,8 @@ from tetris_engine.shapes import cells_for
 
 class Board:
     def __init__(self, width: int = DEFAULT_WIDTH) -> None:
-        if width <= 0:
-            raise ValueError(f"width must be positive, got {width}")
+        if width <= DEFAULT_ZERO:
+            raise ValueError(f"width must be greater than 0, got {width}")
         self.width = width
         self._rows: Dict[int, Set[int]] = {}
         self._col_heights: List[int] = [DEFAULT_ZERO] * width
@@ -36,7 +36,7 @@ class Board:
         for dx, dy in cells:
             if dy > deepest_local_row.get(dx, -1):
                 deepest_local_row[dx] = dy
-
+        # crux of logic
         return max(
             self._col_heights[left_col + dx] + dy
             for dx, dy in deepest_local_row.items()
@@ -70,7 +70,7 @@ class Board:
         self._recompute_heights()
 
     def _recompute_heights(self) -> None:
-        heights = [0] * self.width
+        heights = [DEFAULT_ZERO] * self.width
         for row, cols in self._rows.items():
             for col in cols:
                 if row + 1 > heights[col]:

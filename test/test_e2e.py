@@ -1,6 +1,4 @@
-"""End-to-end checks against the exact worked examples in the problem
-statement, plus a full run of the provided sample input file. If these
-pass, the engine matches spec.
+"""End-to-end checks against the spec asked
 """
 import pytest
 
@@ -44,7 +42,7 @@ SAMPLE_INPUT = [
 ]
 SAMPLE_EXPECTED = [2, 4, 0, 2, 4, 1, 0, 2, 2, 2, 1, 1, 4, 3, 1, 2, 1, 8, 8, 0, 3]
 
-
+# TODO:  check all edge cases from the PDF spec sheet,
 def test_full_sample_input_file():
     actual = [resulting_height(line) for line in SAMPLE_INPUT]
     assert actual == SAMPLE_EXPECTED

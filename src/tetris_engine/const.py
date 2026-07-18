@@ -19,6 +19,6 @@ SHAPES: Dict[str, Tuple[Cell, ...]] = {
     "J": ((1, 0), (1, 1), (0, 2), (1, 2)),
 }
 
-## string splitter ulit
+## string splitter ulits
 
 SPLIT_COMMA = ","

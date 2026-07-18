@@ -1,4 +1,4 @@
-"""A simplified Tetris engine: drop pieces, clear rows, report height."""
+"""Tetris engine: drop pieces, clear rows, report height."""
 
 from .board import Board
 from .engine import resulting_height
