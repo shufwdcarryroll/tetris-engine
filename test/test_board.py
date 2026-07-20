@@ -28,14 +28,15 @@ def test_pieces_in_disjoint_columns_dont_affect_each_other():
 
 
 def test_T_piece_leaves_a_gap_under_its_arms():
-    # T's stem (the single lower cell) touches down first, so the two
-    # "arm" cells end up floating one row above the floor.
+    # T's stem touches down first so the arms float one row up.
+    # took me a while to convince myself this is right, its because
+    # pieces drop straight down and cant tuck
     board = Board()
     board.drop("T", 0)
     assert board.column_heights()[:3] == [2, 2, 2]
     assert (0, 0) not in board.occupied_cells()  # gap under the left arm
-    assert (1, 0) in board.occupied_cells()      # stem touches the floor
-    assert (0, 1) in board.occupied_cells()      # left arm floats above it
+    assert (1, 0) in board.occupied_cells()
+    assert (0, 1) in board.occupied_cells()
 
 
 def test_full_width_row_clears_and_collapses_height():
@@ -47,11 +48,12 @@ def test_full_width_row_clears_and_collapses_height():
 
 
 def test_row_above_a_clear_keeps_its_internal_gaps():
-    # Regression for the "rows drop as whole rows, gaps included" rule.
+    # regression - rows drop as whole rows, gaps included. this broke
+    # when the clear logic was rewriten to use the sparse dict
     board = Board()
     board.drop("Q", 0)
     board.drop("I", 2)
-    board.drop("I", 6)   # bottom row now full across columns 0-9, clears
+    board.drop("I", 6)   # bottom row now full, clears
     board.drop("I", 0)
     board.drop("I", 6)
     board.drop("I", 6)
@@ -64,10 +66,13 @@ def test_row_above_a_clear_keeps_its_internal_gaps():
 def test_out_of_bounds_column_is_rejected(bad_column):
     board = Board()
     with pytest.raises(ValueError):
-        board.drop("Q", bad_column)  # Q is 2 wide, so col 9 also overflows
+        board.drop("Q", bad_column)  # Q is 2 wide, col 9 overflows too
 
 
 def test_custom_width_is_respected():
     board = Board(width=4)
     board.drop("I", 0)  # exactly fills a 4-wide row
     assert board.height == 0
+
+# TODO no tests for S/Z/L/J pieces or for the parser hooking into board,
+# and nothing checks what happens droping onto a really tall stack

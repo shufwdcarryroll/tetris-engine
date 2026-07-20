@@ -4,6 +4,7 @@ import pytest
 
 from tetris_engine.engine import resulting_height
 
+## example as given in spec
 SPEC_EXAMPLES = [
     ("Q0", 2),
     ("I0,I4,Q8", 1),

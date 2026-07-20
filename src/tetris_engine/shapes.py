@@ -7,9 +7,11 @@ def cells_for(letter: str) -> Tuple[Cell, ...]:
     try:
         return SHAPES[letter]
     except KeyError:
+        # re-raise as ValueError so callers dont need to know about the dict
         valid = SPLIT_COMMA.join(sorted(SHAPES))
         raise ValueError(f"unknown piece {letter!r}; expected  {valid}") from None
 
 
+# width here means colums spanned, n
 def width_of(letter: str) -> int:
     return max(dx for dx, _ in cells_for(letter)) + 1

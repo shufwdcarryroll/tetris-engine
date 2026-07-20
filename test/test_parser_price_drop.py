@@ -8,7 +8,7 @@ def test_parses_basic_sequence():
         PieceDrop("Q", 8),
     ]
 
-
+## white sace warappen
 def test_tolerates_incidental_whitespace():
     assert list(parse_line(" Q0, I2 \n")) == [PieceDrop("Q", 0),
                                               PieceDrop("I", 2)]

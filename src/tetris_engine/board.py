@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from typing import Dict, List, Set
@@ -8,12 +7,14 @@ from tetris_engine.shapes import cells_for
 
 
 class Board:
+    # sparse board, row 0 at bottom. only settled cells get stored
+
     def __init__(self, width: int = DEFAULT_WIDTH) -> None:
         if width <= DEFAULT_ZERO:
             raise ValueError(f"width must be greater than 0, got {width}")
         self.width = width
         self._rows: Dict[int, Set[int]] = {}
-        self._col_heights: List[int] = [DEFAULT_ZERO] * width
+        self._col_heights: List[int] = [DEFAULT_ZERO] * width  # cached, keep in sync
 
     def drop(self, letter: str, left_col: int) -> None:
         cells = cells_for(letter)
@@ -32,11 +33,12 @@ class Board:
             )
 
     def _landing_row(self, left_col: int, cells) -> int:
+        # only the lowest cell per colum matters for landing
         deepest_local_row: Dict[int, int] = {}
         for dx, dy in cells:
             if dy > deepest_local_row.get(dx, -1):
                 deepest_local_row[dx] = dy
-        # crux of logic
+        # piece rests on whichever column forces it highest, no tucking under overhangs
         return max(
             self._col_heights[left_col + dx] + dy
             for dx, dy in deepest_local_row.items()
@@ -54,6 +56,7 @@ class Board:
         return touched_rows
 
     def _clear_completed_rows(self, candidate_rows: Set[int]) -> None:
+        # only rows the last piece touched can have become full
         full_rows = sorted(
             row for row in candidate_rows
             if len(self._rows.get(row, ())) == self.width
@@ -70,6 +73,8 @@ class Board:
         self._recompute_heights()
 
     def _recompute_heights(self) -> None:
+        # TODO: incremental update instead of full rebuild, fine for now
+        # since boards are small but wont scale
         heights = [DEFAULT_ZERO] * self.width
         for row, cols in self._rows.items():
             for col in cols:
@@ -84,5 +89,6 @@ class Board:
     def column_heights(self) -> List[int]:
         return list(self._col_heights)
 
+    # TODO probably shloud return frozenset
     def occupied_cells(self) -> Set[tuple]:
         return {(row, col) for row, cols in self._rows.items() for col in cols}

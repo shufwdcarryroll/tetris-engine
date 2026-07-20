@@ -16,6 +16,7 @@ from .engine import resulting_height
 
 def process_lines(lines: Iterable[str], out: IO[str], width: int = DEFAULT_WIDTH) -> None:
     for line in lines:
+        # blank lines are fine, just skip them insted of printing a 0
         if not line.strip():
             continue
         print(resulting_height(line, width), file=out)
@@ -50,9 +51,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = build_arg_parser().parse_args(argv)
+    # TODO a bad line kills the whole run, may want to catch ValueError
+    # per line and keep going with an error msg. depends what callers expect
     try:
         process_lines(args.infile, args.outfile, args.width)
     finally:
+        # argparse opens the files for us but wont close them
         if args.infile is not sys.stdin:
             args.infile.close()
         if args.outfile is not sys.stdout:
